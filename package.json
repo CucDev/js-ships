@@ -2,7 +2,7 @@
   "name": "js-ships",
   "version": "1.0.0",
   "description": "",
-  "main": "server/index.js",
+  "main": "src/server/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/CucJS/js-ships/issues"
   },
-  "homepage": "https://github.com/CucJS/js-ships#readme"
+  "homepage": "https://github.com/CucJS/js-ships#readme",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
 }
