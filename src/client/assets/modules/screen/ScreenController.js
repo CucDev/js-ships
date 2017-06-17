@@ -7,7 +7,7 @@ function ScreenController(screenId) {
     this.height = this.canvas.height;
     this.width = this.canvas.width;
 
-    var ship = new Ship(this.height / 2, this.width / 2, this.height * 0.1)
+    var ship = new Ship(this.height / 2, this.width / 2, this.height * 0.05)
 
     function drawLine(ctx, xStart, yStart, xEnd, yEnd) {
         ctx.beginPath();
@@ -17,7 +17,7 @@ function ScreenController(screenId) {
     }
 
     this.drawBackground = function (ctx) {
-        var columns = 10, rows = 10;
+        var columns = 15, rows = 15;
         var columnWidth = this.width / columns, rowHeight = this.height / rows;
 
         ctx.fillStyle = "#FFF";
