@@ -10,7 +10,9 @@ function startApp() {
     var canvas = screenController.canvas;
     canvas.style.left = ((window.innerWidth / 2) - (canvas.clientWidth / 2)) + "px";
 
-    screenController.render()
+    setInterval(function () {
+        screenController.render()
+    }, 100)
 
 }
 
