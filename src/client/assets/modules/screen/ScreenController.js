@@ -8,7 +8,7 @@ function ScreenController(screenId) {
     this.height = this.canvas.height;
     this.width = this.canvas.width;
 
-    var ship = new Ship(this.height / 2, this.width / 2, this.height * 0.05);
+    var ship = new Ship(this.height / 2, this.width / 2, this.height * 0.03);
 
     function notifyMoveShip(posX, posY) {
         //transform coordinates in window to coordinates in the html canvas object
@@ -23,7 +23,7 @@ function ScreenController(screenId) {
     }
 
     function notifyShot() {
-        console.log("shoot");
+        ship.shoot()
     }
 
     this.canvas.addEventListener("mousemove", function (event) {
