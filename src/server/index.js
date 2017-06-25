@@ -1,12 +1,10 @@
 /**
  * Created by garusis on 6/06/17.
  */
-var express = require('express')
-var app = express()
+var serverParts = require("./server-parts");
 
-console.log(process.cwd())
-app.use(express.static("src/client"))
+var ShipController = require("./ShipController")
 
-app.listen(3000, function () {
+serverParts.http.listen(3000, function () {
     console.log('Example app listening on port 3000!')
 })

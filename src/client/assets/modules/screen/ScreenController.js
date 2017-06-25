@@ -1,14 +1,12 @@
 /**
  * Created by garusis on 7/06/17.
  */
-function ScreenController(screenId) {
+function ScreenController(screenId, socket) {
     var screenController = this;
 
     this.canvas = document.getElementById(screenId);
-    this.height = this.canvas.height;
-    this.width = this.canvas.width;
 
-    var ship = new Ship(this.height / 2, this.width / 2, this.height * 0.03);
+    this.ships = [];
 
     function notifyMoveShip(posX, posY) {
         //transform coordinates in window to coordinates in the html canvas object
@@ -16,19 +14,20 @@ function ScreenController(screenId) {
         posY = posY - screenController.canvas.offsetTop;
 
         //transform coordinates in canvas to coordinates in the canvas context.
-        posX = (posX * screenController.width) / screenController.canvas.clientWidth;
-        posY = (posY * screenController.height) / screenController.canvas.clientHeight;
+        posX = (posX * screenController.canvas.width) / screenController.canvas.clientWidth;
+        posY = (posY * screenController.canvas.height) / screenController.canvas.clientHeight;
 
-        ship.translate(posX, posY);
+        socket.emit("ship::translate", {x: posX, y: posY})
     }
 
     function notifyShot() {
-        ship.shoot()
+        socket.emit("ship::shoot")
     }
 
     this.canvas.addEventListener("mousemove", function (event) {
         notifyMoveShip(event.pageX, event.pageY);
-    })
+    });
+
     this.canvas.addEventListener("touchmove", function (event) {
         event.preventDefault();
         if (event.touches.length > 1) {
@@ -39,6 +38,10 @@ function ScreenController(screenId) {
     });
     this.canvas.addEventListener("click", notifyShot);
 
+    socket.on("update-ships-state", function (ships) {
+        screenController.ships = ships;
+    })
+
     function drawLine(ctx, xStart, yStart, xEnd, yEnd) {
         ctx.beginPath();
         ctx.moveTo(xStart, yStart);
@@ -48,18 +51,18 @@ function ScreenController(screenId) {
 
     this.drawBackground = function (ctx) {
         var columns = 15, rows = 15;
-        var columnWidth = this.width / columns, rowHeight = this.height / rows;
+        var columnWidth = this.canvas.width / columns, rowHeight = this.canvas.height / rows;
 
         ctx.fillStyle = "#FFF";
-        ctx.fillRect(0, 0, this.width, this.height);
+        ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         ctx.setLineDash([20, 5]);
         ctx.lineWidth = 1;
-        for (var linePos = columnWidth; linePos < this.width; linePos += columnWidth) {
-            drawLine(ctx, linePos, 0, linePos, this.height);
+        for (var linePos = columnWidth; linePos < this.canvas.width; linePos += columnWidth) {
+            drawLine(ctx, linePos, 0, linePos, this.canvas.height);
         }
-        for (var linePos = rowHeight; linePos < this.height; linePos += rowHeight) {
-            drawLine(ctx, 0, linePos, this.height, linePos);
+        for (var linePos = rowHeight; linePos < this.canvas.height; linePos += rowHeight) {
+            drawLine(ctx, 0, linePos, this.canvas.height, linePos);
         }
         ctx.setLineDash([]);
     }
@@ -68,6 +71,11 @@ function ScreenController(screenId) {
         var ctx = this.canvas.getContext("2d");
         this.drawBackground(ctx)
 
-        ship.draw(ctx)
+        this.ships.forEach(function (ship) {
+            ship.size = screenController.canvas.height * 0.03;
+            ship.isMyShip = ship.socket_id === socket.id;
+
+            drawShip(ctx, ship)
+        })
     }
 }
