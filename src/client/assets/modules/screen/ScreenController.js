@@ -30,12 +30,13 @@ function ScreenController(screenId) {
         notifyMoveShip(event.pageX, event.pageY);
     })
     this.canvas.addEventListener("touchmove", function (event) {
+        event.preventDefault();
         if (event.touches.length > 1) {
             return notifyShot();
         }
         var touch = event.touches[0];
         notifyMoveShip(touch.pageX, touch.pageY);
-    })
+    });
     this.canvas.addEventListener("click", notifyShot);
 
     function drawLine(ctx, xStart, yStart, xEnd, yEnd) {
