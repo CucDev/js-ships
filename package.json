@@ -1,0 +1,30 @@
+{
+  "name": "js-ships",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CucJS/js-ships.git"
+  },
+  "keywords": [
+    "cucjs",
+    "javascript",
+    "websockets",
+    "game",
+    "workshop"
+  ],
+  "author": "Garusis <garusis@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CucJS/js-ships/issues"
+  },
+  "homepage": "https://github.com/CucJS/js-ships#readme",
+  "dependencies": {
+    "express": "^4.15.3",
+    "socket.io": "^2.0.3"
+  }
+}
