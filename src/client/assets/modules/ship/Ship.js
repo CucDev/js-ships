@@ -28,9 +28,4 @@ function drawShip(ctx, ship) {
     ctx.stroke();
 
     ctx.restore();
-
-    ship.bullets.forEach(function (bullet) {
-        bullet.size = ship.size * 0.4;
-        drawBullet(ctx, bullet)
-    })
 }

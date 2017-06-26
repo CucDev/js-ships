@@ -1,17 +1,13 @@
-/**
+/**Ship
  * Created by garusis on 18/06/17.
  */
-function Bullet(startX, startY, angle) {
-    var bullet = this;
-
+function Bullet(parentId, startX, startY, angle, size) {
     this.x = startX;
     this.y = startY;
     this.angle = angle;
-
-    setInterval(function () {
-        bullet.translate();
-    }, 20)
-
+    this.size = size;
+    this.parentId = parentId;
+    this.id = parentId + Date.now();
 
     this.translate = function () {
         this.x += 5 * Math.sin(this.angle);
@@ -20,9 +16,13 @@ function Bullet(startX, startY, angle) {
 
     this.toPlainObjet = function () {
         return {
+            parentId: parentId,
+            id: this.id,
+            type: "Bullet",
             x: this.x,
             y: this.y,
-            angle: this.angle
+            angle: this.angle,
+            size: this.size
         }
     }
 

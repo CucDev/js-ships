@@ -1,14 +1,35 @@
 /**
  * Created by garusis on 7/06/17.
  */
+
+function findInArray(array, field, comparator) {
+    for (var i = 0; i < array.length; i++) {
+        if (array[i][field] === comparator) {
+            return array[i]
+        }
+    }
+}
+
+function findIndexArray(array, field, comparator) {
+    for (var i = 0; i < array.length; i++) {
+        if (array[i][field] === comparator) {
+            return i
+        }
+    }
+}
+
+
 function ScreenController(screenId, socket) {
     var screenController = this;
 
     this.canvas = document.getElementById(screenId);
 
     this.ships = [];
+    this.bullets = [];
+    this.gameStatus = "playing";
 
     function notifyMoveShip(posX, posY) {
+
         //transform coordinates in window to coordinates in the html canvas object
         posX = posX - screenController.canvas.offsetLeft;
         posY = posY - screenController.canvas.offsetTop;
@@ -38,9 +59,59 @@ function ScreenController(screenId, socket) {
     });
     this.canvas.addEventListener("click", notifyShot);
 
-    socket.on("update-ships-state", function (ships) {
-        screenController.ships = ships;
-    })
+    socket.on("load-current-targets", function (targets) {
+        targets.forEach(function (target) {
+            if (target.type === "Ship") {
+                screenController.ships.push(target);
+            } else {
+                screenController.bullets.push(target);
+            }
+        });
+    });
+
+
+    socket.on("ship::add", function (ship) {
+        ship.isMyShip = ship.socket_id === socket.id;
+        screenController.gameStatus = "playing";
+        screenController.ships.push(ship);
+    });
+
+    socket.on("ship::update", function (ship) {
+        var existingShip = findInArray(screenController.ships, "socket_id", ship.socket_id);
+        for (var key in ship) {
+            existingShip[key] = ship[key];
+        }
+    });
+
+    socket.on("ship::remove", function (shipSocketId) {
+        var index = findIndexArray(screenController.ships, "socket_id", shipSocketId);
+        var ship = screenController.ships[index];
+
+        screenController.ships.splice(index, 1);
+
+        if (ship.isMyShip) {
+            screenController.gameStatus = "looser";
+        } else if (screenController.ships.length === 1) {
+            screenController.gameStatus = "winner";
+        }
+    });
+
+    socket.on("bullet::add", function (bullet) {
+        screenController.bullets.push(bullet);
+    });
+
+    socket.on("bullet::update", function (bullet) {
+        var existingBullet = findInArray(screenController.bullets, "id", bullet.id);
+        for (var key in bullet) {
+            existingBullet[key] = bullet[key];
+        }
+    });
+
+    socket.on("bullet::remove", function (bulletId) {
+        var index = findIndexArray(screenController.bullets, "id", bulletId);
+        screenController.bullets.splice(index, 1);
+    });
+
 
     function drawLine(ctx, xStart, yStart, xEnd, yEnd) {
         ctx.beginPath();
@@ -69,13 +140,23 @@ function ScreenController(screenId, socket) {
 
     this.render = function () {
         var ctx = this.canvas.getContext("2d");
-        this.drawBackground(ctx)
+        this.drawBackground(ctx);
 
         this.ships.forEach(function (ship) {
-            ship.size = screenController.canvas.height * 0.03;
-            ship.isMyShip = ship.socket_id === socket.id;
-
             drawShip(ctx, ship)
-        })
+        });
+
+        this.bullets.forEach(function (bullet) {
+            drawBullet(ctx, bullet)
+        });
+
+        ctx.font = "60px Arial";
+        ctx.fillStyle = "red";
+        console.log((this.canvas.width / 2) - 50, (this.canvas.height / 2) - 15)
+        if (this.gameStatus === "winner") {
+            ctx.fillText("You win!!!", (this.canvas.width / 2) - 125, (this.canvas.height / 2) - 15);
+        } else if (this.gameStatus === "looser") {
+            ctx.fillText("You are a loooooooser!!! :D", (this.canvas.width / 2) - 365, (this.canvas.height / 2) - 15);
+        }
     }
 }
