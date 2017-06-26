@@ -91,7 +91,7 @@ function ScreenController(screenId, socket) {
 
         if (ship.isMyShip) {
             screenController.gameStatus = "looser";
-        } else if (screenController.ships.length === 1) {
+        } else if (screenController.gameStatus !== "looser" && screenController.ships.length === 1) {
             screenController.gameStatus = "winner";
         }
     });
@@ -152,7 +152,6 @@ function ScreenController(screenId, socket) {
 
         ctx.font = "60px Arial";
         ctx.fillStyle = "red";
-        console.log((this.canvas.width / 2) - 50, (this.canvas.height / 2) - 15)
         if (this.gameStatus === "winner") {
             ctx.fillText("You win!!!", (this.canvas.width / 2) - 125, (this.canvas.height / 2) - 15);
         } else if (this.gameStatus === "looser") {
